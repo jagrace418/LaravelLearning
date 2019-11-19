@@ -3,7 +3,6 @@
 namespace Tests\Unit;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class ProjectTest extends TestCase
@@ -13,5 +12,12 @@ class ProjectTest extends TestCase
     public function hasPath(){
         $project = factory('App\Project')->create();
         $this->assertEquals('/projects/' . $project->id, $project->path());
+    }
+
+    /** @test */
+    public function belongsToOwner()
+    {
+        $project = factory('App\Project')->create();
+        $this->assertInstanceOf('App\User', $project->owner);
     }
 }
