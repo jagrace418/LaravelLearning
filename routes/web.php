@@ -16,13 +16,15 @@ Route::get('/', function () {
 });
 
 Route::group(['middleware' => 'auth'], function () {
-
+    //project dashboard
     Route::get('/projects', 'ProjectsController@index');
-
+    //project create page
+    Route::get('/projects/create', 'ProjectsController@create');
+    //post a project
     Route::post('/projects', 'ProjectsController@store');
-
+    //single project view
     Route::get('/projects/{project}', 'ProjectsController@show');
-
+    //home
     Route::get('/home', 'HomeController@index')->name('home');
 });
 

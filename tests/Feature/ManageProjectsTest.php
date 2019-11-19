@@ -6,7 +6,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
-class ProjectsTest extends TestCase
+class ManageProjectsTest extends TestCase
 {
 
     use WithFaker, RefreshDatabase;
@@ -17,6 +17,9 @@ class ProjectsTest extends TestCase
         //don't handle exe, aka throw the http exe when the route is not founds
         $this->withoutExceptionHandling();
         $this->actingAs(factory('App\User')->create());
+
+        $this->get('/projects/create')->assertStatus(200);
+
         $attributes = [
             'title' => $this->faker->sentence,
             'description' => $this->faker->paragraph,
@@ -48,23 +51,17 @@ class ProjectsTest extends TestCase
     }
 
     /** @test */
-    public function onlyLoggedInUsersCanCreateProject()
-    {
-        $attributes = factory('App\Project')->raw();
-        $this->post('/projects', $attributes)->assertRedirect('login');
-    }
-
-    /** @test */
-    public function guestsMayNotViewProjects()
-    {
-        $this->get('/projects')->assertRedirect('login');
-    }
-
-    /** @test */
-    public function guestsMayNotViewSingleProject()
+    public function guestsCanNotManageProjects()
     {
         $project = factory('App\Project')->create();
+        //if you try to access the project dashboard
+        $this->get('/projects')->assertRedirect('login');
+        //can not get to the create form
+        $this->get('/projects/create')->assertRedirect('login');
+        //if you try to access a project
         $this->get($project->path())->assertRedirect('login');
+        //if you try to make a new project
+        $this->post('/projects', $project->toArray())->assertRedirect('login');
     }
 
 
