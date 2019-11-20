@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Project;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -16,7 +17,7 @@ class ManageProjectsTest extends TestCase
     {
         //don't handle exe, aka throw the http exe when the route is not founds
         $this->withoutExceptionHandling();
-        $this->actingAs(factory('App\User')->create());
+        $this->signIn();
 
         $this->get('/projects/create')->assertStatus(200);
 
@@ -34,7 +35,7 @@ class ManageProjectsTest extends TestCase
     /** @test */
     public function projectRequiresTitle()
     {
-        $this->actingAs(factory('App\User')->create());
+        $this->signIn();
         //create a project with empty title, do not persist
         $attributes = factory('App\Project')->raw(['title' => '']);
 //        $attributes = factory('App\Project')->create(['title' => '']);//saves to db
@@ -45,7 +46,7 @@ class ManageProjectsTest extends TestCase
     /** @test */
     public function projectRequiresDescription()
     {
-        $this->actingAs(factory('App\User')->create());
+        $this->signIn();
         $attributes = factory('App\Project')->raw(['description' => '']);
         $this->post('/projects', $attributes)->assertSessionHasErrors('description');
     }
@@ -68,7 +69,8 @@ class ManageProjectsTest extends TestCase
     /** @test */
     public function userViewTheirProject()
     {
-        $this->be(factory('App\User')->create());
+        $this->signIn();
+        /** @var Project $project */
         $project = factory('App\Project')->create(['owner_id' => auth()->id()]);
         $this->get($project->path())
             ->assertSee($project->title)
@@ -78,7 +80,7 @@ class ManageProjectsTest extends TestCase
     /** @test */
     public function userCanNotViewNotTheirProjects()
     {
-        $this->be(factory('App\User')->create());
+        $this->signIn();
         $project = factory('App\Project')->create();
         $this->get($project->path())->assertStatus(403);
     }

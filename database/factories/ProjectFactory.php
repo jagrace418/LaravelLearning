@@ -8,8 +8,8 @@ use Illuminate\Database\Eloquent\Factory;
 
 $factory->define(Project::class, function (Faker $faker) {
     return [
-        'title' => $faker->sentence,
-        'description' => $faker->paragraph,
+        'title' => $faker->sentence(4),
+        'description' => $faker->paragraph(1),
         'owner_id' => function () {
             return factory(App\User::class)->create()->id;
         }
