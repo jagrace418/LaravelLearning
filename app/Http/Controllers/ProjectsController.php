@@ -14,12 +14,13 @@ class ProjectsController extends Controller
 
     public function store()
     {
-        auth()->user()->projects()->create(request()->validate([
+        /** @var Project $project */
+        $project = auth()->user()->projects()->create(request()->validate([
             'title' => 'required',
             'description' => 'required',
         ]));
         //redirect
-        return redirect('/projects');
+        return redirect($project->path());
     }
 
     public function show(Project $project)
