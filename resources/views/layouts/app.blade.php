@@ -26,7 +26,7 @@
                 <h1>
                     <a class="navbar-brand" href="{{ url('/') }}">
                         <img width="30" src="/images/cpu.svg" alt="Birdboard">
-                        {{ config('app.name', 'Laravel') }}
+                        {{ config('app.name', 'Birdboard') }}
                     </a>
                 </h1>
                 <div>

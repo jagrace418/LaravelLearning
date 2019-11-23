@@ -5,7 +5,6 @@ namespace Tests\Feature;
 use App\Project;
 use App\Task;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class ProjectTasksTest extends TestCase {
@@ -32,6 +31,16 @@ class ProjectTasksTest extends TestCase {
 		);
 		$attributes = factory(Task::class)->raw(['body' => '']);
 		$this->post($project->path() . '/tasks', $attributes)->assertSessionHasErrors('body');
+	}
+
+	/** @test */
+	public function onlyOwnerAddsTasks () {
+		$this->signIn();
+		/** @var Project $project */
+		$project = factory('App\Project')->create();
+		$this->post($project->path() . '/tasks', ['body' => 'test of task'])
+			->assertStatus(403);
+		$this->assertDatabaseMissing('tasks', ['body' => 'test of task']);
 	}
 
 }
