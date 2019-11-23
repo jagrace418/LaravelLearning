@@ -24,6 +24,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/projects', 'ProjectsController@store');
     //add a task
     Route::post('/projects/{project}/tasks', 'ProjectTasksController@store');
+	//update a task
+	Route::patch('/projects/{project}/tasks/{task}', 'ProjectTasksController@update');
     //single project view
     Route::get('/projects/{project}', 'ProjectsController@show');
     //home

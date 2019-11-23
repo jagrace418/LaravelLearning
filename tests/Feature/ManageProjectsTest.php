@@ -12,7 +12,7 @@ class ManageProjectsTest extends TestCase
 
     use WithFaker, RefreshDatabase;
 
-//    /** @test */
+	/** @test */
     public function userCreateProject()
     {
         //don't handle exe, aka throw the http exe when the route is not founds
@@ -25,7 +25,7 @@ class ManageProjectsTest extends TestCase
             'title' => $this->faker->sentence,
             'description' => $this->faker->paragraph,
         ];
-        $this->post('/projects', $attributes)->assertRedirect('/projects');
+		$this->post('/projects', $attributes);
 
         $this->assertDatabaseHas('projects', $attributes);
 
