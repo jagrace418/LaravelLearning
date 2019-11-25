@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Project;
+use Facades\Tests\Setup\ProjectFactory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -13,8 +14,6 @@ class ManageProjectsTest extends TestCase {
 
 	/** @test */
 	public function userCreateProject () {
-		//don't handle exe, aka throw the http exe when the route is not founds
-		$this->withoutExceptionHandling();
 		$this->signIn();
 
 		$this->get('/projects/create')->assertStatus(200);
@@ -31,8 +30,6 @@ class ManageProjectsTest extends TestCase {
 
 		$response->assertRedirect($project->path());
 
-		$this->assertDatabaseHas('projects', $attributes);
-
 		$this->get($project->path())
 			->assertSee($attributes['title'])
 			->assertSee($attributes['description'])
@@ -41,13 +38,11 @@ class ManageProjectsTest extends TestCase {
 
 	/** @test */
 	public function userCanUpdateProject () {
-		$this->signIn();
-		/** @var Project $project */
-		$project = factory('App\Project')->create(['owner_id' => auth()->id()]);
-		$this->patch($project->path(), [
-			'notes' => 'Changed',
-		])->assertRedirect($project->path());
-		$this->assertDatabaseHas('projects', ['notes' => 'Changed']);
+		$project = ProjectFactory::create();
+		$this->actingAs($project->owner)
+			->patch($project->path(), $attributes = ['notes' => 'Changed',])
+			->assertRedirect($project->path());
+		$this->assertDatabaseHas('projects', $attributes);
 	}
 
 	/** @test */
@@ -91,10 +86,9 @@ class ManageProjectsTest extends TestCase {
 
 	/** @test */
 	public function userViewTheirProject () {
-		$this->signIn();
-		/** @var Project $project */
-		$project = factory('App\Project')->create(['owner_id' => auth()->id()]);
-		$this->get($project->path())
+		$project = ProjectFactory::create();
+		$this->actingAs($project->owner)
+			->get($project->path())
 			->assertSee($project->title);
 //			->assertSee($project->description);
 	}

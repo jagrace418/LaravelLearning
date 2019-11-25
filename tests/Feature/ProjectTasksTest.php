@@ -4,8 +4,11 @@ namespace Tests\Feature;
 
 use App\Project;
 use App\Task;
+use Facades\Tests\Setup\ProjectFactory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+
+//this is a sneaky facade
 
 class ProjectTasksTest extends TestCase {
 
@@ -15,22 +18,19 @@ class ProjectTasksTest extends TestCase {
 	public function projectHasTasks () {
 		$this->signIn();
 		/** @var Project $project */
-		$project = auth()->user()->projects()->create(
-			factory(Project::class)->raw()
-		);
-		$this->post($project->path() . '/tasks', ['body' => 'test task']);
+		$project = ProjectFactory::create();
+		$this->actingAs($project->owner)
+			->post($project->path() . '/tasks', ['body' => 'test task']);
 		$this->get($project->path())->assertSee('test task');
 	}
 
 	/** @test */
 	public function taskRequiresBody () {
-		$this->signIn();
-		/** @var Project $project */
-		$project = auth()->user()->projects()->create(
-			factory(Project::class)->raw()
-		);
+		$project = ProjectFactory::create();
 		$attributes = factory(Task::class)->raw(['body' => '']);
-		$this->post($project->path() . '/tasks', $attributes)->assertSessionHasErrors('body');
+		$this->actingAs($project->owner)
+			->post($project->path() . '/tasks', $attributes)
+			->assertSessionHasErrors('body');
 	}
 
 	/** @test */
@@ -45,18 +45,16 @@ class ProjectTasksTest extends TestCase {
 
 	/** @test */
 	public function aTaskCanBeUpdated () {
-		$this->signIn();
 		/** @var Project $project */
-		$project = auth()->user()->projects()->create(
-			factory(Project::class)->raw()
-		);
-		/** @var Task $task */
-		$task = $project->addTask('new task');
+		$project = ProjectFactory::
+		ownedBy($this->signIn())
+			->withTasks(1)
+			->create();
 		$taskAttributes = [
 			'body'      => 'changed',
 			'completed' => true,
 		];
-		$this->patch($task->path(), $taskAttributes);
+		$this->patch($project->tasks[0]->path(), $taskAttributes);
 
 		$this->assertDatabaseHas('tasks', $taskAttributes);
 	}
@@ -65,11 +63,8 @@ class ProjectTasksTest extends TestCase {
 	public function onlyProjectOwnerCanUpdate () {
 		$this->signIn();
 		/** @var Project $project */
-		$project = factory('App\Project')->create();
-		/** @var Task $task */
-		$task = $project->addTask('not my task');
-
-		$this->patch($task->path(), ['body' => 'changed'])
+		$project = ProjectFactory::withTasks(1)->create();
+		$this->patch($project->tasks()->first()->path(), ['body' => 'changed'])
 			->assertStatus(403);
 
 		$this->assertDatabaseMissing('tasks', ['body' => 'changed']);
