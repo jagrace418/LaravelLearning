@@ -30,6 +30,8 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::patch('/projects/{project}/tasks/{task}', 'ProjectTasksController@update');
     //single project view
     Route::get('/projects/{project}', 'ProjectsController@show');
+	//edit a project
+	Route::get('/projects/{project}/edit', 'ProjectsController@edit');
     //home
     Route::get('/home', 'HomeController@index')->name('home');
 });

@@ -40,8 +40,10 @@ class ManageProjectsTest extends TestCase {
 	public function userCanUpdateProject () {
 		$project = ProjectFactory::create();
 		$this->actingAs($project->owner)
-			->patch($project->path(), $attributes = ['notes' => 'Changed',])
+			->patch($project->path(), $attributes = ['notes' => 'Changed', 'title' => 'Changed', 'description' => 'Changed'])
 			->assertRedirect($project->path());
+
+		$this->get($project->path() . '/edit')->assertStatus(200);
 		$this->assertDatabaseHas('projects', $attributes);
 	}
 
@@ -69,6 +71,7 @@ class ManageProjectsTest extends TestCase {
 		$this->get('/projects')->assertRedirect('login');
 		//can not get to the create form
 		$this->get('/projects/create')->assertRedirect('login');
+		$this->get($project->path() . '/edit')->assertRedirect('login');
 		//if you try to access a project
 		$this->get($project->path())->assertRedirect('login');
 		//if you try to make a new project
