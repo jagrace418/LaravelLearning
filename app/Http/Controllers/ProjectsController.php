@@ -4,32 +4,31 @@ namespace App\Http\Controllers;
 
 use App\Project;
 
-class ProjectsController extends Controller
-{
-    public function index()
-    {
-        $projects = auth()->user()->projects;
-        return view('projects.index', compact('projects'));
-    }
+class ProjectsController extends Controller {
 
-    public function store()
-    {
-        /** @var Project $project */
+	public function index () {
+		$projects = auth()->user()->projects;
+
+		return view('projects.index', compact('projects'));
+	}
+
+	public function store () {
+		/** @var Project $project */
 		$project = auth()->user()->projects()->create($this->validateRequest());
-        //redirect
-        return redirect($project->path());
-    }
 
-    public function show(Project $project)
-    {
+		//redirect
+		return redirect($project->path());
+	}
+
+	public function show (Project $project) {
 		$this->authorize('update', $project);
-        return view('projects.show', compact('project'));
-    }
 
-    public function create()
-    {
-        return view('projects.create');
-    }
+		return view('projects.show', compact('project'));
+	}
+
+	public function create () {
+		return view('projects.create');
+	}
 
 	public function edit (Project $project) {
 		return view('projects.edit', compact('project'));
@@ -46,12 +45,12 @@ class ProjectsController extends Controller
 	/**
 	 * @return array
 	 */
-	public function validateRequest () {
+	protected function validateRequest () {
 		return request()->validate([
-			'title'       => 'required',
-			'description' => 'required',
+			'title'       => 'sometimes|required',
+			'description' => 'sometimes|required',
 			//min 3 characters
-			'notes'       => 'min:3',
+			'notes'       => 'nullable',
 		]);
 	}
 }

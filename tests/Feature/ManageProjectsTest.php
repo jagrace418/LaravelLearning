@@ -48,6 +48,17 @@ class ManageProjectsTest extends TestCase {
 	}
 
 	/** @test */
+	public function userCanUpdateProjectNotes () {
+		$project = ProjectFactory::create();
+		$this->actingAs($project->owner)
+			->patch($project->path(), $attributes = ['notes' => 'Changed'])
+			->assertRedirect($project->path());
+
+		$this->get($project->path() . '/edit')->assertStatus(200);
+		$this->assertDatabaseHas('projects', $attributes);
+	}
+
+	/** @test */
 	public function projectRequiresTitle () {
 		$this->signIn();
 		//create a project with empty title, do not persist
