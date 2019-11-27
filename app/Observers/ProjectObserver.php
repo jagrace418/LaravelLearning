@@ -2,7 +2,6 @@
 
 namespace App\Observers;
 
-use App\Activity;
 use App\Project;
 
 class ProjectObserver {
@@ -15,14 +14,7 @@ class ProjectObserver {
 	 * @return void
 	 */
 	public function created (Project $project) {
-		$this->recordActivity($project, 'created');
-	}
-
-	protected function recordActivity (Project $project, $type) {
-		Activity::create([
-			'project_id'  => $project->id,
-			'description' => $type
-		]);
+		$project->recordActivity('created');
 	}
 
 	/**
@@ -33,39 +25,6 @@ class ProjectObserver {
 	 * @return void
 	 */
 	public function updated (Project $project) {
-		$this->recordActivity($project, 'updated');
-	}
-
-	/**
-	 * Handle the project "deleted" event.
-	 *
-	 * @param \App\Project $project
-	 *
-	 * @return void
-	 */
-	public function deleted (Project $project) {
-		//
-	}
-
-	/**
-	 * Handle the project "restored" event.
-	 *
-	 * @param \App\Project $project
-	 *
-	 * @return void
-	 */
-	public function restored (Project $project) {
-		//
-	}
-
-	/**
-	 * Handle the project "force deleted" event.
-	 *
-	 * @param \App\Project $project
-	 *
-	 * @return void
-	 */
-	public function forceDeleted (Project $project) {
-		//
+		$project->recordActivity('updated');
 	}
 }

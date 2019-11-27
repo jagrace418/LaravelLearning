@@ -12,7 +12,7 @@ class ActivityFeedTest extends TestCase {
 	use RefreshDatabase;
 
 	/** @test */
-	public function createProjectGeneratesActivity () {
+	public function createProjectRecordsActivity () {
 		/** @var Project $project */
 		$project = ProjectFactory::create();
 
@@ -22,7 +22,7 @@ class ActivityFeedTest extends TestCase {
 	}
 
 	/** @test */
-	public function updatingProjectGeneratesActivity () {
+	public function updatingProjectRecordsActivity () {
 		/** @var Project $project */
 		$project = ProjectFactory::create();
 
@@ -31,5 +31,30 @@ class ActivityFeedTest extends TestCase {
 		self::assertCount(2, $project->activity);
 
 		self::assertEquals('updated', $project->activity->last()->description);
+	}
+
+	/** @test */
+	public function creatingNewTaskRecordsActivityForProject () {
+		/** @var Project $project */
+		$project = ProjectFactory::create();
+
+		$project->addTask('something');
+
+		self::assertCount(2, $project->activity);
+	}
+
+	/** @test */
+	public function completingTaskRecordsActivity () {
+		/** @var Project $project */
+		$project = ProjectFactory::withTasks(1)->create();
+
+		$this->actingAs($project->owner)
+			->patch($project->tasks[0]->path(), [
+				'body'      => 'foo',
+				'completed' => true,
+			]);
+
+		self::assertCount(3, $project->activity);
+		self::assertEquals('completed_task', $project->activity->last()->description);
 	}
 }
