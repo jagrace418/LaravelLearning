@@ -46,15 +46,46 @@ class ProjectTasksTest extends TestCase {
 	/** @test */
 	public function aTaskCanBeUpdated () {
 		/** @var Project $project */
-		$project = ProjectFactory::
-		ownedBy($this->signIn())
-			->withTasks(1)
-			->create();
+		$project = ProjectFactory::withTasks(1)->create();
+
+		$taskAttributes = [
+			'body' => 'changed',
+		];
+
+		$this->actingAs($project->owner)
+			->patch($project->tasks[0]->path(), $taskAttributes);
+
+		$this->assertDatabaseHas('tasks', $taskAttributes);
+	}
+
+	/** @test */
+	public function aTaskCanBeCompleted () {
+		/** @var Project $project */
+		$project = ProjectFactory::withTasks(1)->create();
+
 		$taskAttributes = [
 			'body'      => 'changed',
 			'completed' => true,
 		];
-		$this->patch($project->tasks[0]->path(), $taskAttributes);
+
+		$this->actingAs($project->owner)
+			->patch($project->tasks[0]->path(), $taskAttributes);
+
+		$this->assertDatabaseHas('tasks', $taskAttributes);
+	}
+
+	/** @test */
+	public function aTaskCanBeUnCompleted () {
+		/** @var Project $project */
+		$project = ProjectFactory::withTasks(1)->create();
+
+		$taskAttributes = [
+			'body'      => 'changed',
+			'completed' => false,
+		];
+
+		$this->actingAs($project->owner)
+			->patch($project->tasks[0]->path(), $taskAttributes);
 
 		$this->assertDatabaseHas('tasks', $taskAttributes);
 	}
