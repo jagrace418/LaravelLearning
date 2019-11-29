@@ -71,6 +71,8 @@
 			</div>
 			<div class="flex-auto -mx-8">
 				@include('projects.card')
+
+				@include('projects.activity.card')
 			</div>
 
 		</div>

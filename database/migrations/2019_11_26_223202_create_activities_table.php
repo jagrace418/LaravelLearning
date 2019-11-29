@@ -11,7 +11,7 @@ class CreateActivitiesTable extends Migration {
 	 * @return void
 	 */
 	public function up () {
-		Schema::create('activities', function (Blueprint $table) {
+		Schema::create('activity', function (Blueprint $table) {
 			$table->bigIncrements('id');
 			$table->unsignedBigInteger('project_id');
 			$table->timestamps();
@@ -26,6 +26,6 @@ class CreateActivitiesTable extends Migration {
 	 * @return void
 	 */
 	public function down () {
-		Schema::dropIfExists('activities');
+		Schema::dropIfExists('activity');
 	}
 }
