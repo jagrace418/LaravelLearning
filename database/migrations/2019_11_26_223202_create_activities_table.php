@@ -11,9 +11,13 @@ class CreateActivitiesTable extends Migration {
 	 * @return void
 	 */
 	public function up () {
-		Schema::create('activity', function (Blueprint $table) {
+		Schema::create('activities', function (Blueprint $table) {
 			$table->bigIncrements('id');
 			$table->unsignedBigInteger('project_id');
+			$table->nullableMorphs('subject');
+			//the same as
+//			$table->unsignedBigInteger('subject_id');
+//			$table->string('subject_type');
 			$table->timestamps();
 			$table->string('description');
 
@@ -26,6 +30,6 @@ class CreateActivitiesTable extends Migration {
 	 * @return void
 	 */
 	public function down () {
-		Schema::dropIfExists('activity');
+		Schema::dropIfExists('activities');
 	}
 }
