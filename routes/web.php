@@ -16,20 +16,12 @@ Route::get('/', function () {
 });
 
 Route::group(['middleware' => 'auth'], function () {
-	//project dashboard
-	Route::get('/projects', 'ProjectsController@index');
-	//project create page
-	Route::get('/projects/create', 'ProjectsController@create');
-	//post a project
-	Route::post('/projects', 'ProjectsController@store');
-	//update a project
-	Route::patch('/projects/{project}', 'ProjectsController@update');
-	//add a task
-	Route::post('/projects/{project}/tasks', 'ProjectTasksController@store');
+	//all routes for projects in 1
+	Route::resource('projects', 'ProjectsController');
 	//update a task
 	Route::patch('/projects/{project}/tasks/{task}', 'ProjectTasksController@update');
-	//single project view
-	Route::get('/projects/{project}', 'ProjectsController@show');
+	//add a task
+	Route::post('/projects/{project}/tasks', 'ProjectTasksController@store');
 	//edit a project
 	Route::get('/projects/{project}/edit', 'ProjectsController@edit');
 	//home

@@ -16,7 +16,6 @@ class ProjectTasksTest extends TestCase {
 
 	/** @test */
 	public function projectHasTasks () {
-		$this->signIn();
 		/** @var Project $project */
 		$project = ProjectFactory::create();
 		$this->actingAs($project->owner)
