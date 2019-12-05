@@ -3,6 +3,7 @@
 namespace Tests\Unit;
 
 use App\Project;
+use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -22,6 +23,13 @@ class ProjectTest extends TestCase
     {
         $project = factory('App\Project')->create();
         $this->assertInstanceOf('App\User', $project->owner);
+    }
+
+    /** @test */
+    public function canInviteUser(){
+        $project = factory('App\Project')->create();
+        $project->invite($user = factory(User::class)->create());
+        self::assertTrue($project->members->contains($user));
     }
 
     /** @test */
