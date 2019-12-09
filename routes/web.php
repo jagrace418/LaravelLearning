@@ -24,6 +24,8 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::post('/projects/{project}/tasks', 'ProjectTasksController@store');
 	//edit a project
 	Route::get('/projects/{project}/edit', 'ProjectsController@edit');
+	//invite a user
+	Route::post('/projects/{project}/invitations', 'ProjectInvitationsController@store');
 	//home
 	Route::get('/home', 'HomeController@index')->name('home');
 });
