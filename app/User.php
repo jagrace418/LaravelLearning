@@ -2,42 +2,80 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\DatabaseNotification;
+use Illuminate\Notifications\DatabaseNotificationCollection;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
+use PhpParser\Builder;
 
-class User extends Authenticatable
-{
-    use Notifiable;
+/**
+ * App\User
+ * @property int                                                        $id
+ * @property string                                                     $name
+ * @property string                                                     $email
+ * @property Carbon|null                                                $email_verified_at
+ * @property string                                                     $password
+ * @property string|null                                                $remember_token
+ * @property Carbon|null                                                $created_at
+ * @property Carbon|null                                                $updated_at
+ * @property-read DatabaseNotificationCollection|DatabaseNotification[] $notifications
+ * @property-read int|null                                              $notifications_count
+ * @property-read Collection|Project[]                                  $projects
+ * @property-read int|null                                              $projects_count
+ * @method static \Illuminate\Database\Eloquent\Builder|User newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|User newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|User query()
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereEmail($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereEmailVerifiedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User wherePassword($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereRememberToken($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+class User extends Authenticatable {
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
-    protected $fillable = [
-        'name', 'email', 'password',
-    ];
+	use Notifiable;
 
-    /**
-     * The attributes that should be hidden for arrays.
-     *
-     * @var array
-     */
-    protected $hidden = [
-        'password', 'remember_token',
-    ];
+	/**
+	 * The attributes that are mass assignable.
+	 * @var array
+	 */
+	protected $fillable = [
+		'name', 'email', 'password',
+	];
 
-    /**
-     * The attributes that should be cast to native types.
-     *
-     * @var array
-     */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-    ];
+	/**
+	 * The attributes that should be hidden for arrays.
+	 * @var array
+	 */
+	protected $hidden = [
+		'password', 'remember_token',
+	];
 
-    public function projects()
-    {
+	/**
+	 * The attributes that should be cast to native types.
+	 * @var array
+	 */
+	protected $casts = [
+		'email_verified_at' => 'datetime',
+	];
+
+	public function projects () {
 		return $this->hasMany(Project::class, 'owner_id')->latest('updated_at');
-    }
+	}
+
+	public function availableProjects () {
+		return Project::where('owner_id', $this->id)
+			->orWhereHas('members', function ($query) {
+				/** @var \Illuminate\Database\Eloquent\Builder $query */
+				$query->where('user_id', $this->id);
+			})
+			->get();
+	}
 }

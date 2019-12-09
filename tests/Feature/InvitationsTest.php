@@ -8,18 +8,21 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
-class InvitationsTest extends TestCase
-{
-    use RefreshDatabase;
-    /** @test */
-    function aProjectCanInviteUser(){
-        $project = ProjectFactory::create();
+class InvitationsTest extends TestCase {
 
-        $project->invite($newUser = factory(User::class)->create());
+	use RefreshDatabase;
 
-        $this->signIn($newUser);
-        $this->post(action('ProjectTasksController@store', $project), $task = ['body' => 'foo task']);
+	/** @test */
+	function aProjectCanInviteUser () {
+		$project = ProjectFactory::create();
 
-        $this->assertDatabaseHas('tasks', $task);
-    }
+		$project->invite($newUser = factory(User::class)->create());
+
+		$this->signIn($newUser);
+		$this->post(action('ProjectTasksController@store', $project), $task = ['body' => 'foo task']);
+
+		$this->assertDatabaseHas('tasks', $task);
+	}
+
+
 }

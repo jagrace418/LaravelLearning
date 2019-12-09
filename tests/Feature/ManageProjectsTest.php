@@ -136,4 +136,12 @@ class ManageProjectsTest extends TestCase {
 		$project = factory('App\Project')->create();
 		$this->get($project->path())->assertStatus(403);
 	}
+
+	/** @test */
+	public function userCanSeeProjectsTheyAreInvitedTo () {
+		$project = tap(ProjectFactory::create())->invite($this->signIn());
+
+		$this->get('/projects')
+			->assertSee($project->title);
+	}
 }
