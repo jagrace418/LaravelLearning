@@ -65,23 +65,17 @@
 					<button type="submit" class="button">Save</button>
 				</form>
 
-
-				@if($errors->any())
-					<div class="mt-3">
-						@foreach($errors->all() as $error)
-							<li class="text-red-light">{{$error}}</li>
-						@endforeach
-					</div>
-				@endif
-
+				@include('errors')
 
 			</div>
 			<div class="flex-auto -mx-8">
 				@include('projects.card')
-
 				@include('projects.activity.card')
-			</div>
 
+				@can('manage', $project)
+					@include('projects.invite')
+				@endcan
+			</div>
 		</div>
 	</main>
 @endsection

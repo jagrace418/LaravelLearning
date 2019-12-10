@@ -3,11 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Project;
+use App\User;
 
 class ProjectsController extends Controller {
 
 	public function index () {
-		$projects = auth()->user()->availableProjects;
+		$projects = auth()->user()->availableProjects();
 
 		return view('projects.index', compact('projects'));
 	}
