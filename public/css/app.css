@@ -539,6 +539,11 @@ table {
   color: white;
 }
 
+.button.is-outlined {
+  background-color: var(--card-background-color);
+  border-width: 1px;
+}
+
 .theme-dark .button {
   box-shadow: 0 2px 7px 0 #323232;
 }
