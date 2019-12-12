@@ -27,20 +27,21 @@
 					<div class="mb-4">
 						<label for="tasks"
 							   class="text-sm block mb-2 w-full">Need Some Tasks?</label>
-						<input type="text" id="tasks" placeholder="Task"
+						<input type="text" id="tasks" placeholder="New Task"
 							   v-for="task in form.tasks"
-							   v-model="task.value"
+							   v-model="task.body"
 							   class="border mb-2 py-1 px-2 text-xs block rounded">
 					</div>
 
-					<button @click="addTask" class="inline-flex items-center button text-xs">
+					<button @click="addTask" type="button" class="inline-flex items-center button text-xs">
 						<span>Add New Task Field</span>
 					</button>
 				</div>
 			</div>
 
 			<footer class="flex justify-end">
-				<button class="button mr-2 is-outlined" @click="$modal.hide('new-project-modal')">Cancel</button>
+				<button class="button mr-2 is-outlined" type="button" @click="$modal.hide('new-project-modal')">Cancel
+				</button>
 				<button class="button">Create Project</button>
 			</footer>
 		</form>
@@ -57,7 +58,7 @@
                     title: '',
                     description: '',
                     tasks: [
-                        {value: ''},
+                        {body: ''},
                     ]
                 },
                 errors: {}
@@ -66,7 +67,7 @@
 
         methods: {
             addTask() {
-                this.form.tasks.push({value: ''});
+                this.form.tasks.push({body: ''});
             },
             submit() {
                 axios.post('/projects', this.form)

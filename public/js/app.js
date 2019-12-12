@@ -1887,6 +1887,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "NewProjectModal",
   data: function data() {
@@ -1895,7 +1896,7 @@ __webpack_require__.r(__webpack_exports__);
         title: '',
         description: '',
         tasks: [{
-          value: ''
+          body: ''
         }]
       },
       errors: {}
@@ -1904,7 +1905,7 @@ __webpack_require__.r(__webpack_exports__);
   methods: {
     addTask: function addTask() {
       this.form.tasks.push({
-        value: ''
+        body: ''
       });
     },
     submit: function submit() {
@@ -19736,20 +19737,24 @@ var render = function() {
                         {
                           name: "model",
                           rawName: "v-model",
-                          value: task.value,
-                          expression: "task.value"
+                          value: task.body,
+                          expression: "task.body"
                         }
                       ],
                       staticClass:
                         "border mb-2 py-1 px-2 text-xs block rounded",
-                      attrs: { type: "text", id: "tasks", placeholder: "Task" },
-                      domProps: { value: task.value },
+                      attrs: {
+                        type: "text",
+                        id: "tasks",
+                        placeholder: "New Task"
+                      },
+                      domProps: { value: task.body },
                       on: {
                         input: function($event) {
                           if ($event.target.composing) {
                             return
                           }
-                          _vm.$set(task, "value", $event.target.value)
+                          _vm.$set(task, "body", $event.target.value)
                         }
                       }
                     })
@@ -19762,6 +19767,7 @@ var render = function() {
                 "button",
                 {
                   staticClass: "inline-flex items-center button text-xs",
+                  attrs: { type: "button" },
                   on: { click: _vm.addTask }
                 },
                 [_c("span", [_vm._v("Add New Task Field")])]
@@ -19774,13 +19780,14 @@ var render = function() {
               "button",
               {
                 staticClass: "button mr-2 is-outlined",
+                attrs: { type: "button" },
                 on: {
                   click: function($event) {
                     return _vm.$modal.hide("new-project-modal")
                   }
                 }
               },
-              [_vm._v("Cancel")]
+              [_vm._v("Cancel\n\t\t\t")]
             ),
             _vm._v(" "),
             _c("button", { staticClass: "button" }, [_vm._v("Create Project")])

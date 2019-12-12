@@ -141,4 +141,18 @@ class ManageProjectsTest extends TestCase {
 		$this->get('/projects')
 			->assertSee($project->title);
 	}
+
+	/** @test */
+	public function tasksCanBePartOfNewProjectCreation () {
+		$this->signIn();
+		$attributes = factory('App\Project')->raw();
+		$attributes['tasks'] = [
+			['body' => 'Task 1'],
+			['body' => 'Task 2']
+		];
+
+		$this->post('/projects', $attributes);
+
+		self::assertCount(2, Project::first()->tasks);
+	}
 }
