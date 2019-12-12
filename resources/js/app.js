@@ -12,6 +12,7 @@ Vue.use(VModal);
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 Vue.component('theme-switcher', require('./components/ThemeSwitcher.vue').default);
+Vue.component('new-project-modal', require('./components/NewProjectModal').default);
 
 
 const app = new Vue({

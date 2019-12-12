@@ -86,7 +86,7 @@ abbr[title] {
   border-bottom: none; /* 1 */
   text-decoration: underline; /* 2 */
   -webkit-text-decoration: underline dotted;
-  text-decoration: underline dotted; /* 2 */
+          text-decoration: underline dotted; /* 2 */
 }
 
 /**
@@ -569,8 +569,8 @@ button {
 
 .appearance-none {
   -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
+     -moz-appearance: none;
+          appearance: none;
 }
 
 .bg-fixed {
@@ -3671,8 +3671,8 @@ button {
 
   .sm\:appearance-none {
     -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
+       -moz-appearance: none;
+            appearance: none;
   }
 
   .sm\:bg-fixed {
