@@ -10,7 +10,7 @@
 						<input type="text" id="title"
 							   v-model="form.title"
 							   class="border py-1 px-2 text-xs block rounded w-full">
-						<span class="text-xs italic text-error" v-if="errors.title" v-text="errors.title[0]"/>
+						<span class="text-xs italic text-error" v-if="form.errors.title" v-text="form.errors.title[0]"/>
 					</div>
 					<div class="mb-4">
 						<label for="description"
@@ -18,8 +18,8 @@
 						<textarea id="description" rows="7"
 								  v-model="form.description"
 								  class="border py-1 px-2 text-xs block w-full rounded"/>
-						<span class="text-xs italic text-error" v-if="errors.description"
-							  v-text="errors.description[0]"/>
+						<span class="text-xs italic text-error" v-if="form.errors.description"
+							  v-text="form.errors.description[0]"/>
 					</div>
 				</div>
 				<!--right side-->
@@ -49,19 +49,20 @@
 </template>
 
 <script>
+    import BirdboardForm from "./BirdboardForm";
+
     export default {
         name: "NewProjectModal",
 
         data() {
             return {
-                form: {
+                form: new BirdboardForm({
                     title: '',
                     description: '',
                     tasks: [
                         {body: ''},
                     ]
-                },
-                errors: {}
+                })
             };
         },
 
@@ -70,13 +71,11 @@
                 this.form.tasks.push({body: ''});
             },
             submit() {
-                axios.post('/projects', this.form)
-                    .then(response => {
-                        location = response.data.message;
-                    })
-                    .catch(error => {
-                        this.errors = error.response.data.errors;
-                    });
+                if (!this.form.tasks[0].body) {
+                    delete this.form.originalData.tasks;
+                }
+                this.form.submit('/projects')
+                    .then(response => location = response.data.message);
             },
 
             //alternative way with async

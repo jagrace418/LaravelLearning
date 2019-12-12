@@ -1836,8 +1836,10 @@ module.exports = {
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-"use strict";
-__webpack_require__.r(__webpack_exports__);
+            "use strict";
+            __webpack_require__.r(__webpack_exports__);
+            /* harmony import */
+            var _BirdboardForm__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./BirdboardForm */ "./resources/js/components/BirdboardForm.js");
 //
 //
 //
@@ -1888,18 +1890,18 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "NewProjectModal",
   data: function data() {
     return {
-      form: {
-        title: '',
-        description: '',
-        tasks: [{
-          body: ''
-        }]
-      },
-      errors: {}
+        form: new _BirdboardForm__WEBPACK_IMPORTED_MODULE_0__["default"]({
+            title: '',
+            description: '',
+            tasks: [{
+                body: ''
+            }]
+        })
     };
   },
   methods: {
@@ -1909,13 +1911,13 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     submit: function submit() {
-      var _this = this;
+        if (!this.form.tasks[0].body) {
+            delete this.form.originalData.tasks;
+        }
 
-      axios.post('/projects', this.form).then(function (response) {
-        location = response.data.message;
-      })["catch"](function (error) {
-        _this.errors = error.response.data.errors;
-      });
+        this.form.submit('/projects').then(function (response) {
+            return location = response.data.message;
+        });
     } //alternative way with async
     // async submit(){
     //   try {
@@ -19666,11 +19668,13 @@ var render = function() {
                   }
                 }),
                 _vm._v(" "),
-                _vm.errors.title
+                  _vm.form.errors.title
                   ? _c("span", {
-                      staticClass: "text-xs italic text-error",
-                      domProps: { textContent: _vm._s(_vm.errors.title[0]) }
-                    })
+                          staticClass: "text-xs italic text-error",
+                          domProps: {
+                              textContent: _vm._s(_vm.form.errors.title[0])
+                          }
+                      })
                   : _vm._e()
               ]),
               _vm._v(" "),
@@ -19706,11 +19710,11 @@ var render = function() {
                   }
                 }),
                 _vm._v(" "),
-                _vm.errors.description
+                  _vm.form.errors.description
                   ? _c("span", {
                       staticClass: "text-xs italic text-error",
                       domProps: {
-                        textContent: _vm._s(_vm.errors.description[0])
+                          textContent: _vm._s(_vm.form.errors.description[0])
                       }
                     })
                   : _vm._e()
@@ -32041,14 +32045,128 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 //     encrypted: true
 // });
 
-/***/ }),
+            /***/
+        }),
 
-/***/ "./resources/js/components/NewProjectModal.vue":
-/*!*****************************************************!*\
-  !*** ./resources/js/components/NewProjectModal.vue ***!
-  \*****************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+        /***/
+        "./resources/js/components/BirdboardForm.js":
+        /*!**************************************************!*\
+          !*** ./resources/js/components/BirdboardForm.js ***!
+          \**************************************************/
+        /*! exports provided: default */
+        /***/ (function (module, __webpack_exports__, __webpack_require__) {
+
+            "use strict";
+            __webpack_require__.r(__webpack_exports__);
+
+            function _classCallCheck(instance, Constructor) {
+                if (!(instance instanceof Constructor)) {
+                    throw new TypeError("Cannot call a class as a function");
+                }
+            }
+
+            function _defineProperties(target, props) {
+                for (var i = 0; i < props.length; i++) {
+                    var descriptor = props[i];
+                    descriptor.enumerable = descriptor.enumerable || false;
+                    descriptor.configurable = true;
+                    if ("value" in descriptor) descriptor.writable = true;
+                    Object.defineProperty(target, descriptor.key, descriptor);
+                }
+            }
+
+            function _createClass(Constructor, protoProps, staticProps) {
+                if (protoProps) _defineProperties(Constructor.prototype, protoProps);
+                if (staticProps) _defineProperties(Constructor, staticProps);
+                return Constructor;
+            }
+
+            var BirdboardForm =
+                /*#__PURE__*/
+                function () {
+                    function BirdboardForm(data) {
+                        _classCallCheck(this, BirdboardForm);
+
+                        this.originalData = JSON.parse(JSON.stringify(data));
+                        Object.assign(this, data);
+                        this.submitted = false;
+                        this.errors = {};
+                    }
+
+                    _createClass(BirdboardForm, [{
+                        key: "data",
+                        value: function data() {
+                            var _this = this;
+
+                            // let data = {};
+                            // for(let attribute in this.originalData){
+                            //     data[attribute] = this[attribute];
+                            // }
+                            // return data;
+                            //alternative
+                            return Object.keys(this.originalData).reduce(function (data, attribute) {
+                                data[attribute] = _this[attribute];
+                                return data;
+                            }, {});
+                        }
+                    }, {
+                        key: "post",
+                        value: function post(endpoint) {
+                            return this.submit(endpoint);
+                        }
+                    }, {
+                        key: "patch",
+                        value: function patch(endpoint) {
+                            return this.submit(endpoint, 'patch');
+                        }
+                    }, {
+                        key: "delete",
+                        value: function _delete(endpoint) {
+                            return this.submit(endpoint, 'delete');
+                        }
+                    }, {
+                        key: "submit",
+                        value: function submit(endpoint) {
+                            var requestType = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'post';
+                            return axios[requestType](endpoint, this.data())["catch"](this.onFail.bind(this)).then(this.onSuccess.bind(this));
+                        }
+                    }, {
+                        key: "onSuccess",
+                        value: function onSuccess(response) {
+                            this.submitted = true;
+                            this.errors = {};
+                            return response;
+                        }
+                    }, {
+                        key: "onFail",
+                        value: function onFail(error) {
+                            this.errors = error.response.data.errors;
+                            this.submitted = false;
+                            throw error;
+                        }
+                    }, {
+                        key: "reset",
+                        value: function reset() {
+                            Object.assign(this, this.originalData);
+                        }
+                    }]);
+
+                    return BirdboardForm;
+                }();
+
+            /* harmony default export */
+            __webpack_exports__["default"] = (BirdboardForm);
+
+            /***/
+        }),
+
+        /***/
+        "./resources/js/components/NewProjectModal.vue":
+        /*!*****************************************************!*\
+          !*** ./resources/js/components/NewProjectModal.vue ***!
+          \*****************************************************/
+        /*! exports provided: default */
+        /***/ (function (module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
